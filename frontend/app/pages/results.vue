@@ -1,33 +1,34 @@
 <script setup lang="ts">
+import { useGameResultsApi } from "~~/composables/useGameResultsApi";
 import { useGameStore } from "~~/stores/game";
 
 interface ResultItem {
+  id?: string;
   playerName: string;
   durationMs: number;
+  correctAnswers?: number;
+  totalQuestions?: number;
   completedAt: string;
-  answers: {
-    questionKey: string;
-    selectedOption: "A" | "B" | "C";
-    isCorrect: boolean;
-    attemptNumber: number;
-    answeredAt: string;
-  }[];
-  collectedBooks: string[];
 }
 
 const router = useRouter();
 const game = useGameStore();
+const { getLeaderboard } = useGameResultsApi();
+
 const leaderboard = ref<ResultItem[]>([]);
-const lastResult = ref<ResultItem | null>(null);
+const isLoading = ref(true);
 
-onMounted(() => {
-  leaderboard.value = JSON.parse(
-    localStorage.getItem("exam-game-leaderboard") || "[]",
-  );
+const lastResult = computed(() => game.finishedResult);
 
-  lastResult.value = JSON.parse(
-    localStorage.getItem("exam-game-last-result") || "null",
-  );
+onMounted(async () => {
+  try {
+    leaderboard.value = await getLeaderboard(20);
+  } catch (error) {
+    console.error("Failed to load leaderboard", error);
+    leaderboard.value = [];
+  } finally {
+    isLoading.value = false;
+  }
 });
 
 function formatDuration(durationMs: number) {
@@ -39,10 +40,7 @@ function formatDuration(durationMs: number) {
 }
 
 function playAgain() {
-  const name =
-    lastResult.value?.playerName ||
-    localStorage.getItem("exam-game-player-name") ||
-    "";
+  const name = game.playerName || lastResult.value?.playerName || "";
   game.startGame(name);
   router.push("/game");
 }
@@ -58,11 +56,24 @@ function goHome() {
     <div class="panel results-panel">
       <h1 class="title results-title">Rezultāti</h1>
 
+      <div v-if="lastResult" class="results-block">
+        <h2 class="section-title">Tavs rezultāts</h2>
+        <div class="leaderboard-row">
+          <div class="leaderboard-rank">Tu</div>
+          <div class="leaderboard-name">{{ lastResult.playerName }}</div>
+          <div class="leaderboard-time">
+            {{ formatDuration(lastResult.durationMs) }}
+          </div>
+        </div>
+      </div>
+
       <div class="results-block">
-        <div v-if="leaderboard.length" class="leaderboard-list">
+        <p v-if="isLoading">Ielādējas...</p>
+
+        <div v-else-if="leaderboard.length" class="leaderboard-list">
           <div
             v-for="(item, index) in leaderboard"
-            :key="`${item.playerName}-${item.completedAt}-${index}`"
+            :key="item.id || `${item.playerName}-${item.completedAt}-${index}`"
             class="leaderboard-row"
           >
             <div class="leaderboard-rank">#{{ index + 1 }}</div>

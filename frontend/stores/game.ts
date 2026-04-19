@@ -11,10 +11,12 @@ interface AnswerLog {
   answeredAt: string;
 }
 
-interface FinishedResult {
+export interface FinishedResult {
   playerName: string;
   durationMs: number;
   completedAt: string;
+  correctAnswers: number;
+  totalQuestions: number;
   answers: AnswerLog[];
   collectedBooks: string[];
 }
@@ -34,6 +36,7 @@ export const useGameStore = defineStore("game", {
     lastRewardLabel: "",
     cooldownRemaining: 0,
     cooldownTimerId: null as ReturnType<typeof setInterval> | null,
+    finishedResult: null as FinishedResult | null,
   }),
 
   getters: {
@@ -131,27 +134,15 @@ export const useGameStore = defineStore("game", {
     finishGame() {
       this.finishedAt = Date.now();
 
-      const result: FinishedResult = {
+      this.finishedResult = {
         playerName: this.playerName,
         durationMs: this.finishedAt - this.startedAt,
         completedAt: new Date().toISOString(),
+        correctAnswers: this.answeredQuestionKeys.length,
+        totalQuestions: Object.keys(questionsMap).length,
         answers: this.answers,
         collectedBooks: this.collectedBooks,
       };
-
-      localStorage.setItem("exam-game-last-result", JSON.stringify(result));
-
-      const existing = JSON.parse(
-        localStorage.getItem("exam-game-leaderboard") || "[]",
-      ) as FinishedResult[];
-
-      existing.push(result);
-      existing.sort((a, b) => a.durationMs - b.durationMs);
-
-      localStorage.setItem(
-        "exam-game-leaderboard",
-        JSON.stringify(existing.slice(0, 50)),
-      );
     },
 
     resetGame() {
@@ -172,6 +163,7 @@ export const useGameStore = defineStore("game", {
       this.lastRewardLabel = "";
       this.cooldownRemaining = 0;
       this.cooldownTimerId = null;
+      this.finishedResult = null;
     },
   },
 });

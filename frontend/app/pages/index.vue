@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { useGameStore } from "~~/stores/game";
+
 const router = useRouter();
+const game = useGameStore();
 
 const step = ref<"welcome" | "name">("welcome");
 const playerName = ref("");
@@ -7,9 +10,10 @@ const playerName = ref("");
 const canStart = computed(() => playerName.value.trim().length >= 2);
 
 function startGame() {
-  if (!canStart.value) return;
+  const name = playerName.value.trim();
+  if (!name) return;
 
-  localStorage.setItem("exam-game-player-name", playerName.value.trim());
+  game.startGame(name);
   router.push("/game");
 }
 </script>

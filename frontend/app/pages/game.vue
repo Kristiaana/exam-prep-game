@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { CircleAlert } from "lucide-vue-next";
 import { stages } from "~~/data/stages";
+import { useGameResultsApi } from "~~/composables/useGameResultsApi";
 import { useGameStore } from "~~/stores/game";
 import type { OptionKey } from "~~/types/game";
 
 const router = useRouter();
 const game = useGameStore();
+const { createGameResult } = useGameResultsApi();
 
 const selectedOption = ref<OptionKey | "">("");
 const ready = ref(false);
+const isSubmittingResult = ref(false);
 
 const currentStage = computed(() => game.currentStage);
 
@@ -27,14 +30,6 @@ const hallwayButtonLabel = computed(() => {
 });
 
 onMounted(() => {
-  if (!game.playerName || !game.startedAt) {
-    const storedName = localStorage.getItem("exam-game-player-name") || "";
-
-    if (storedName) {
-      game.startGame(storedName);
-    }
-  }
-
   if (!game.playerName || !game.startedAt) {
     ready.value = false;
     return;
@@ -63,11 +58,31 @@ function submitAnswer() {
   }
 }
 
-function continueAfterReward() {
+async function continueAfterReward() {
   const isLastStage = game.currentStageIndex >= 9;
   game.closeRewardModal();
 
-  if (isLastStage) {
+  if (!isLastStage) return;
+
+  if (!game.finishedResult || isSubmittingResult.value) {
+    router.push("/results");
+    return;
+  }
+
+  try {
+    isSubmittingResult.value = true;
+
+    await createGameResult({
+      playerName: game.finishedResult.playerName,
+      durationMs: game.finishedResult.durationMs,
+      correctAnswers: game.finishedResult.correctAnswers,
+      totalQuestions: game.finishedResult.totalQuestions,
+      completedAt: game.finishedResult.completedAt,
+    });
+  } catch (error) {
+    console.error("Failed to save result", error);
+  } finally {
+    isSubmittingResult.value = false;
     router.push("/results");
   }
 }
@@ -123,7 +138,7 @@ function goHome() {
     </div>
 
     <QuestionModal
-      class="m-1"
+      class="m-2"
       v-if="game.isQuestionModalOpen && game.currentQuestion"
       v-model="selectedOption"
       :question="game.currentQuestion"
