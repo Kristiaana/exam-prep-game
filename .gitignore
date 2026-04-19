@@ -1,0 +1,13 @@
+node_modules
+dist
+.nuxt
+.output
+.env
+.env.*
+coverage
+backend/node_modules
+frontend/node_modules
+backend/dist
+frontend/.nuxt
+frontend/.output
+.DS_Store
