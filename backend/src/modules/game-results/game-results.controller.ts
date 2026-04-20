@@ -13,7 +13,7 @@ export class GameResultsController {
 
   @Get('leaderboard')
   async getLeaderboard(@Query('limit') limit?: string) {
-    const parsedLimit = limit ? Number(limit) : 20;
+    const parsedLimit = limit ? Number(limit) : 100;
     return await this.gameResultsService.getLeaderboard(parsedLimit);
   }
 }

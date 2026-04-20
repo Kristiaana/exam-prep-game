@@ -34,9 +34,11 @@ export const useGameStore = defineStore("game", {
     isQuestionModalOpen: false,
     isRewardModalOpen: false,
     lastRewardLabel: "",
+    lastRewardImage: "",
     cooldownRemaining: 0,
     cooldownTimerId: null as ReturnType<typeof setInterval> | null,
     finishedResult: null as FinishedResult | null,
+    lastSubmittedResultId: "" as string,
   }),
 
   getters: {
@@ -72,6 +74,7 @@ export const useGameStore = defineStore("game", {
     closeRewardModal() {
       this.isRewardModalOpen = false;
       this.lastRewardLabel = "";
+      this.lastRewardImage = "";
 
       if (this.currentStageIndex >= stages.length - 1) {
         this.finishGame();
@@ -100,6 +103,7 @@ export const useGameStore = defineStore("game", {
         this.isQuestionModalOpen = false;
         this.isRewardModalOpen = true;
         this.lastRewardLabel = question.rewardLabel;
+        this.lastRewardImage = question.rewardImage;
         this.currentAttempt = 1;
         return { correct: true };
       }
@@ -145,6 +149,10 @@ export const useGameStore = defineStore("game", {
       };
     },
 
+    setLastSubmittedResultId(id: string) {
+      this.lastSubmittedResultId = id;
+    },
+
     resetGame() {
       if (this.cooldownTimerId) {
         clearInterval(this.cooldownTimerId);
@@ -161,9 +169,11 @@ export const useGameStore = defineStore("game", {
       this.isQuestionModalOpen = false;
       this.isRewardModalOpen = false;
       this.lastRewardLabel = "";
+      this.lastRewardImage = "";
       this.cooldownRemaining = 0;
       this.cooldownTimerId = null;
       this.finishedResult = null;
+      this.lastSubmittedResultId = "";
     },
   },
 });

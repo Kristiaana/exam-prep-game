@@ -18,7 +18,7 @@ export function useGameResultsApi() {
     });
   }
 
-  async function getLeaderboard(limit = 20) {
+  async function getLeaderboard(limit = 100) {
     return await $fetch(`${baseUrl}/game-results/leaderboard`, {
       method: "GET",
       query: { limit },

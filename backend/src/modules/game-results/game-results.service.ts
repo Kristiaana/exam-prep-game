@@ -23,7 +23,7 @@ export class GameResultsService {
     return await this.gameResultsRepository.save(entity);
   }
 
-  async getLeaderboard(limit = 200) {
+  async getLeaderboard(limit = 100) {
     return await this.gameResultsRepository.find({
       order: {
         durationMs: 'ASC',

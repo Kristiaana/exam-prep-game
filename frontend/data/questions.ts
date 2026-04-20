@@ -1,4 +1,4 @@
-import type { Question } from "~/types/game";
+import type { Question } from "~~/types/game";
 
 export const questions: Question[] = [
   {
@@ -12,6 +12,7 @@ export const questions: Question[] = [
     ],
     correctOption: "B",
     rewardLabel: "Latviešu valodas grāmata",
+    rewardImage: "/images/stages/books/lat_val.jpeg",
   },
   {
     key: "soc-1",
@@ -24,6 +25,7 @@ export const questions: Question[] = [
     ],
     correctOption: "B",
     rewardLabel: "Sociālo zinātņu grāmata",
+    rewardImage: "/images/stages/books/soc_zin.jpeg",
   },
   {
     key: "en-1",
@@ -36,6 +38,7 @@ export const questions: Question[] = [
     ],
     correctOption: "B",
     rewardLabel: "Angļu valodas grāmata",
+    rewardImage: "/images/stages/books/english.jpeg",
   },
   {
     key: "hist-1",
@@ -48,6 +51,7 @@ export const questions: Question[] = [
     ],
     correctOption: "A",
     rewardLabel: "Vēstures grāmata",
+    rewardImage: "/images/stages/books/history.jpeg",
   },
   {
     key: "math-1",
@@ -60,6 +64,7 @@ export const questions: Question[] = [
     ],
     correctOption: "A",
     rewardLabel: "Matemātikas grāmata",
+    rewardImage: "/images/stages/books/math.jpeg",
   },
 ];
 

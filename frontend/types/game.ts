@@ -12,6 +12,7 @@ export interface Question {
   options: QuestionOption[];
   correctOption: OptionKey;
   rewardLabel: string;
+  rewardImage: string;
 }
 
 export type StageType = "hallway" | "classroom";

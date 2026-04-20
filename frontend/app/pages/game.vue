@@ -59,29 +59,41 @@ function submitAnswer() {
 }
 
 async function continueAfterReward() {
-  const isLastStage = game.currentStageIndex >= 9;
-  game.closeRewardModal();
+  const isLastStage = game.currentStageIndex >= stages.length - 1;
 
-  if (!isLastStage) return;
+  if (!isLastStage) {
+    game.closeRewardModal();
+    return;
+  }
 
-  if (!game.finishedResult || isSubmittingResult.value) {
-    router.push("/results");
+  if (isSubmittingResult.value) return;
+
+  if (!game.finishedResult) {
+    game.finishGame();
+  }
+
+  if (!game.finishedResult) {
     return;
   }
 
   try {
     isSubmittingResult.value = true;
 
-    await createGameResult({
+    const created = await createGameResult({
       playerName: game.finishedResult.playerName,
       durationMs: game.finishedResult.durationMs,
       correctAnswers: game.finishedResult.correctAnswers,
       totalQuestions: game.finishedResult.totalQuestions,
       completedAt: game.finishedResult.completedAt,
     });
+
+    if ((created as any).id) {
+      game.setLastSubmittedResultId((created as any).id);
+    }
   } catch (error) {
     console.error("Failed to save result", error);
   } finally {
+    game.isRewardModalOpen = false;
     isSubmittingResult.value = false;
     router.push("/results");
   }
@@ -150,6 +162,8 @@ function goHome() {
       class="m-2"
       v-if="game.isRewardModalOpen"
       :reward-label="game.lastRewardLabel"
+      :reward-image="game.lastRewardImage"
+      :is-loading="isSubmittingResult"
       @continue="continueAfterReward"
     />
   </div>

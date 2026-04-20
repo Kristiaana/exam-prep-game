@@ -1,4 +1,4 @@
-import type { Stage } from "~/types/game";
+import type { Stage } from "~~/types/game";
 
 export const stages: Stage[] = [
   {
@@ -24,7 +24,7 @@ export const stages: Stage[] = [
     id: 4,
     type: "classroom",
     title: "Sociālo zinātņu klase",
-    image: "/images/stages/class-lv.jpeg",
+    image: "/images/stages/soc_zin_class.jpeg",
     questionKey: "soc-1",
   },
   {
@@ -37,7 +37,7 @@ export const stages: Stage[] = [
     id: 6,
     type: "classroom",
     title: "Angļu valodas klase",
-    image: "/images/stages/class-lv.jpeg",
+    image: "/images/stages/english_class.jpeg",
     questionKey: "en-1",
   },
   {
@@ -50,7 +50,7 @@ export const stages: Stage[] = [
     id: 8,
     type: "classroom",
     title: "Vēstures klase",
-    image: "/images/stages/class-lv.jpeg",
+    image: "/images/stages/history_class.jpeg",
     questionKey: "hist-1",
   },
   {
@@ -63,7 +63,7 @@ export const stages: Stage[] = [
     id: 10,
     type: "classroom",
     title: "Matemātikas klase",
-    image: "/images/stages/class-lv.jpeg",
+    image: "/images/stages/math_class.jpeg",
     questionKey: "math-1",
   },
 ];
